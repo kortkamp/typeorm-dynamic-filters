@@ -2,11 +2,12 @@
   "name": "typeorm-dynamic-filters",
   "version": "0.0.1",
   "description": "",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
-    "lint": "eslint ./src --fix",
+    "lint": "eslint ./src",
     "prepare": "npm run build",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
@@ -17,8 +18,11 @@
     "type": "git",
     "url": "git+https://github.com/kortkamp/typeorm-dynamic-filters.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Dynamic filters",
+    "TypeORM"
+  ],
+  "author": "Marcelo Kortkamp <https://github.com/kortkamp> (https://kortkamp.dev)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/kortkamp/typeorm-dynamic-filters/issues"
@@ -43,5 +47,9 @@
   },
   "files": [
     "lib/**/*"
-  ]
+  ],
+  "dependencies": {
+    "joi": "^17.6.0",
+    "typeorm": "^0.3.6"
+  }
 }
