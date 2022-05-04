@@ -25,19 +25,35 @@ export const parseQueryFilters = (
   const queryFilterType: string = query.filterType;
   const queryFilterValue: string = query.filterValue;
 
-  return {
-    page: query.page ? Number(query.page) : default_page,
-    per_page: query.per_page ? Number(query.per_page) : default_per_page,
+  const filterBy = query.filterBy
+    ? queryFilterBy.split(',').map(item => item.trim())
+    : [];
 
-    filterBy: query.filterBy
-      ? queryFilterBy.split(',').map(item => item.trim())
-      : [],
-    filterType: query.filterType
-      ? queryFilterType.split(',').map(item => item.trim())
-      : [],
-    filterValue: query.filterValue
-      ? queryFilterValue.split(',').map(item => item.trim())
-      : [],
+  const filterType = query.filterType
+    ? queryFilterType.split(',').map(item => item.trim())
+    : [];
+
+  const filterValue = query.filterValue
+    ? queryFilterValue.split(',').map(item => item.trim())
+    : [];
+
+  if (
+    filterBy.length !== filterType.length ||
+    filterBy.length !== filterValue.length
+  ) {
+    throw new Error('Filters must have the same length');
+  }
+
+  const page = query.page ? Number(query.page) : default_page;
+  const per_page = query.per_page ? Number(query.per_page) : default_per_page;
+
+  return {
+    page,
+    per_page,
+
+    filterBy,
+    filterType,
+    filterValue,
 
     orderBy: query.orderBy as string | undefined,
     orderType: query.orderType as 'ASC' | 'DESC' | undefined,
