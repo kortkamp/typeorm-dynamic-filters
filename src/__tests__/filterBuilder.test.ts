@@ -26,10 +26,15 @@ const orderById = (a: User, b: User) => {
 describe('Test parseQueryFilters', () => {
   let queryFilter: IFilterQuery;
   let ormRepository: Repository<User>;
+
+  let filterQueryBuilder: FilterBuilder<User>;
+
   beforeAll(async () => {
     await AppDataSource.initialize();
 
     ormRepository = AppDataSource.getRepository(User);
+
+    filterQueryBuilder = new FilterBuilder(ormRepository, 'users');
 
     const createUsers = usersData.map(async user => {
       await ormRepository.save(user);
@@ -51,13 +56,9 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
+    const filterQueryBuilder = new FilterBuilder(ormRepository, 'users');
 
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const [_, total] = await queryBuilder.getManyAndCount();
     expect(total).toBe(usersData.length);
@@ -74,12 +75,7 @@ describe('Test parseQueryFilters', () => {
       orderType: 'ASC',
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const [result, _] = await queryBuilder.getManyAndCount();
 
@@ -103,22 +99,13 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
+
     const totalFirstPage = await queryBuilder.getMany();
 
     queryFilter.page = 2;
 
-    const secondPageFilterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const secondPageQueryBuilder = secondPageFilterQueryBuilder.build();
+    const secondPageQueryBuilder = filterQueryBuilder.build(queryFilter);
 
     const totalSecondPage = await secondPageQueryBuilder.getMany();
 
@@ -138,12 +125,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -163,12 +145,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -190,12 +167,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -219,12 +191,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -248,12 +215,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -275,12 +237,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -302,12 +259,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
@@ -331,12 +283,7 @@ describe('Test parseQueryFilters', () => {
       orderType: undefined,
     };
 
-    const filterQueryBuilder = new FilterBuilder(
-      ormRepository,
-      queryFilter,
-      'users',
-    );
-    const queryBuilder = filterQueryBuilder.build();
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
 
     const filteredUsers = await queryBuilder.getMany();
 
