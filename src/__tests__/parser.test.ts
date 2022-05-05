@@ -79,4 +79,62 @@ describe('Test parseQueryFilters', () => {
   });
 });
 
-// describe('Test extractFilter', () => {});
+describe('Test extractFilter', () => {
+  let filterQueryObject: IFilterQuery;
+
+  beforeEach(() => {
+    filterQueryObject = {
+      filterBy: ['name', 'active', 'sales', 'issues'],
+      filterType: ['EQ', 'EQ', 'GE', 'LE'],
+      filterValue: ['John Doe', 'true', '100', '4'],
+      page: 1,
+      per_page: 10,
+      orderBy: 'created_at',
+      orderType: 'DESC',
+    };
+  });
+
+  it('Should extract the desired filter from query filters', () => {
+    const filter = extractFilter({ query: filterQueryObject, field: 'issues' });
+
+    expect(filter).toEqual({
+      filterBy: 'issues',
+      filterType: 'LE',
+      filterValue: '4',
+    });
+
+    expect(filterQueryObject).toEqual({
+      filterBy: ['name', 'active', 'sales'],
+      filterType: ['EQ', 'EQ', 'GE'],
+      filterValue: ['John Doe', 'true', '100'],
+      page: 1,
+      per_page: 10,
+      orderBy: 'created_at',
+      orderType: 'DESC',
+    });
+  });
+
+  it('Should remove the filter from the query param', () => {
+    extractFilter({ query: filterQueryObject, field: 'active' });
+
+    expect(filterQueryObject).toEqual({
+      filterBy: ['name', 'sales', 'issues'],
+      filterType: ['EQ', 'GE', 'LE'],
+      filterValue: ['John Doe', '100', '4'],
+      page: 1,
+      per_page: 10,
+      orderBy: 'created_at',
+      orderType: 'DESC',
+    });
+  });
+
+  it('Should return undefined params for a nonexistent filter', () => {
+    const filter = extractFilter({ query: filterQueryObject, field: 'role' });
+
+    expect(filter).toEqual({
+      filterBy: undefined,
+      filterType: undefined,
+      filterValue: undefined,
+    });
+  });
+});
