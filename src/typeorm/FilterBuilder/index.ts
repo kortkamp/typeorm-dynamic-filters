@@ -7,7 +7,7 @@ import WhereBuilder, { IFilter } from './WhereBuilder';
 
 export interface IFilterQuery extends IFilter, IPage, IOrder {}
 
-export default class FilterBuilder<Entity> {
+export class FilterBuilder<Entity> {
   // private readonly queryBuilder: SelectQueryBuilder<Entity>;
 
   constructor(

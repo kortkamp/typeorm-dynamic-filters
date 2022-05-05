@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import FilterBuilder, { IFilterQuery } from '../typeorm/FilterBuilder';
+import { FilterBuilder, IFilterQuery } from '../typeorm/FilterBuilder';
 import { AppDataSource } from './database/connection';
 import { usersData } from './database/seed';
 import { User } from './database/UserEntity';
