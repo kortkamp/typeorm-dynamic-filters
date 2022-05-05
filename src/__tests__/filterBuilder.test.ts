@@ -13,6 +13,16 @@ import { User } from './database/UserEntity';
 // LE: 'le',
 // BTW: 'btw',
 
+const orderById = (a: User, b: User) => {
+  if (a.id < b.id) {
+    return -1;
+  }
+  if (a.id > b.id) {
+    return 1;
+  }
+  return 0;
+};
+
 describe('Test parseQueryFilters', () => {
   let queryFilter: IFilterQuery;
   let ormRepository: Repository<User>;
@@ -164,6 +174,172 @@ describe('Test parseQueryFilters', () => {
 
     const filteredUsersData = usersData.filter(user => user.role !== 'admin');
 
-    expect(filteredUsers.length).toBe(filteredUsersData.length);
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return IN filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['name'],
+      filterType: ['in'],
+      filterValue: ['John|Peter|Maria'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(user =>
+      ['John', 'Peter', 'Maria'].includes(user.name),
+    );
+
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return LIKE filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['name'],
+      filterType: ['like'],
+      filterValue: ['Mar'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(user =>
+      user.name.includes('Mar'),
+    );
+
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return GE filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['id'],
+      filterType: ['ge'],
+      filterValue: ['4'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(user => user.id >= '4');
+
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return LE filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['id'],
+      filterType: ['le'],
+      filterValue: ['4'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(user => user.id <= '4');
+
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return BTW filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['id'],
+      filterType: ['btw'],
+      filterValue: ['4|9'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(
+      user => user.id >= '4' && user.id <= '9',
+    );
+
+    expect(filteredUsers.sort(orderById)).toEqual(
+      filteredUsersData.sort(orderById),
+    );
+  });
+
+  it('Should return multiple fields filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['id', 'name', 'sex'],
+      filterType: ['btw', 'like', 'eq'],
+      filterValue: ['4|9', 'Mar', 'male'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const filterQueryBuilder = new FilterBuilder(
+      ormRepository,
+      queryFilter,
+      'users',
+    );
+    const queryBuilder = filterQueryBuilder.build();
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    expect(filteredUsers).toEqual([usersData[3]]);
   });
 });

@@ -27,8 +27,8 @@ export const usersData: User[] = [
   },
   {
     id: '4',
-    name: 'Mark',
-    email: 'mark@mail.com',
+    name: 'Marcus',
+    email: 'marcus@mail.com',
     role: 'user',
     sex: 'male',
     active: false,
