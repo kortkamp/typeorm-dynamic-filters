@@ -23,7 +23,7 @@
     "TypeORM"
   ],
   "author": "Marcelo Kortkamp <https://github.com/kortkamp> (https://kortkamp.dev)",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/kortkamp/typeorm-dynamic-filters/issues"
   },
