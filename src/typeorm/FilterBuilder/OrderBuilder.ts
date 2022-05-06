@@ -1,24 +1,18 @@
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
-// import ErrorsApp from '@shared/errors/ErrorsApp';
-
 export interface IOrder {
   orderBy: string | undefined;
   orderType: 'ASC' | 'DESC' | undefined;
 }
 
-export default class OrderBuilder<Entity> {
-  constructor(
-    private readonly queryBuilder: SelectQueryBuilder<Entity>,
-    private order: IOrder,
-    private alias: string,
-  ) {}
+export const orderBuild = <Entity>(
+  queryBuilder: SelectQueryBuilder<Entity>,
+  order: IOrder,
+  alias: string,
+) => {
+  if (!order.orderBy) return;
 
-  build(): undefined {
-    if (!this.order.orderBy) return;
+  const orderColumn = `${alias}.${order.orderBy}`;
 
-    const orderColumn = `${this.alias}.${this.order.orderBy}`;
-
-    this.queryBuilder.orderBy(orderColumn, this.order.orderType);
-  }
-}
+  queryBuilder.orderBy(orderColumn, order.orderType);
+};

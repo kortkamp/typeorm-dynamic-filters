@@ -5,22 +5,18 @@ export interface IPage {
   per_page: number | undefined;
 }
 
-export default class PageBuilder<Entity> {
-  constructor(
-    private readonly queryBuilder: SelectQueryBuilder<Entity>,
-    private pagination?: IPage,
-  ) {}
-
-  build(): void {
-    if (!this.pagination?.per_page) {
-      return;
-    }
-
-    const page = this.pagination.page
-      ? (this.pagination.page - 1) * this.pagination.per_page
-      : undefined;
-
-    this.queryBuilder.take(this.pagination.per_page);
-    this.queryBuilder.skip(page);
+export const pageBuild = <Entity>(
+  queryBuilder: SelectQueryBuilder<Entity>,
+  pagination?: IPage,
+) => {
+  if (!pagination?.per_page) {
+    return;
   }
-}
+
+  const page = pagination.page
+    ? (pagination.page - 1) * pagination.per_page
+    : undefined;
+
+  queryBuilder.take(pagination.per_page);
+  queryBuilder.skip(page);
+};

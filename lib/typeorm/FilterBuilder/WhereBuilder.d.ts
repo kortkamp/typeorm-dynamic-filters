@@ -18,13 +18,4 @@ export declare const FilterTypes: {
     LE: string;
     BTW: string;
 };
-export default class WhereBuilder<Entity> {
-    private readonly queryBuilder;
-    private filter;
-    private alias;
-    private params;
-    private paramsCount;
-    constructor(queryBuilder: SelectQueryBuilder<Entity>, filter: IFilter, alias: string);
-    build(): undefined;
-    private buildFilter;
-}
+export declare const whereBuild: <Entity>(queryBuilder: SelectQueryBuilder<Entity>, filter: IFilter, alias: string) => undefined;

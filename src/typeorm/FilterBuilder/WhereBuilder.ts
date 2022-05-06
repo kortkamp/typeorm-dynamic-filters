@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
 type ParamValue = string | number | Array<string | number>;
@@ -24,78 +25,79 @@ export const FilterTypes = {
   BTW: 'btw',
 };
 
-export default class WhereBuilder<Entity> {
-  private params: Record<string, ParamValue> = {};
-  private paramsCount = 0;
+const buildFilter = (
+  filter: ISingleFilter,
+  alias: string,
+  params: Record<string, ParamValue> = {},
+  paramsCount = 0,
+): string => {
+  const whereColumn = `${alias}.${filter.filterBy}`;
 
-  constructor(
-    private readonly queryBuilder: SelectQueryBuilder<Entity>,
-    private filter: IFilter,
-    private alias: string,
-  ) {}
+  paramsCount += 1;
+  const paramName = `${filter.filterBy}_${paramsCount}`;
+  const paramAuxName = `${filter.filterBy}_${paramsCount}_aux`;
 
-  build(): undefined {
-    const filterLength = this.filter.filterBy?.length;
+  switch (filter.filterType) {
+    case FilterTypes.EQ:
+      params[paramName] = filter.filterValue;
+      return `${whereColumn} = :${paramName}`;
 
-    if (!filterLength) return;
+    case FilterTypes.NOT:
+      params[paramName] = filter.filterValue;
+      return `${whereColumn} != :${paramName}`;
 
-    for (let i = 0; i < filterLength; i += 1) {
-      this.queryBuilder.andWhere(
-        this.buildFilter(
-          {
-            filterBy: this.filter.filterBy[i],
-            filterType: this.filter.filterType[i],
-            filterValue: this.filter.filterValue[i],
-          },
-          this.alias,
-        ),
-        this.params,
-      );
-    }
+    case FilterTypes.IN:
+      params[paramName] = filter.filterValue.split('|');
+      return filter.filterValue.length
+        ? `${whereColumn} IN (:...${paramName})`
+        : `${whereColumn} IN (null)`;
+
+    case FilterTypes.LIKE:
+      params[paramName] = `%${filter.filterValue}%`;
+      return `CAST(${whereColumn} AS TEXT)  LIKE :${paramName}`;
+
+    case FilterTypes.GE:
+      params[paramName] = filter.filterValue;
+      return `${whereColumn} >= :${paramName}`;
+
+    case FilterTypes.LE:
+      params[paramName] = filter.filterValue;
+      return `${whereColumn} <= :${paramName}`;
+
+    case FilterTypes.BTW:
+      [params[paramName], params[paramAuxName]] = filter.filterValue.split('|');
+
+      return `${whereColumn} BETWEEN :${paramName} AND :${paramAuxName} `;
+
+    default:
+      throw new Error(`Unknown filter type: ${filter.filterType}!`);
   }
+};
 
-  private buildFilter(filter: ISingleFilter, alias: string): string {
-    const whereColumn = `${alias}.${filter.filterBy}`;
+export const whereBuild = <Entity>(
+  queryBuilder: SelectQueryBuilder<Entity>,
+  filter: IFilter,
+  alias: string,
+): undefined => {
+  const params: Record<string, ParamValue> = {};
+  const paramsCount = 0;
+  const filterLength = filter.filterBy?.length;
 
-    this.paramsCount += 1;
-    const paramName = `${filter.filterBy}_${this.paramsCount}`;
-    const paramAuxName = `${filter.filterBy}_${this.paramsCount}_aux`;
+  if (!filterLength) return;
 
-    switch (filter.filterType) {
-      case FilterTypes.EQ:
-        this.params[paramName] = filter.filterValue;
-        return `${whereColumn} = :${paramName}`;
-
-      case FilterTypes.NOT:
-        this.params[paramName] = filter.filterValue;
-        return `${whereColumn} != :${paramName}`;
-
-      case FilterTypes.IN:
-        this.params[paramName] = filter.filterValue.split('|');
-        return filter.filterValue.length
-          ? `${whereColumn} IN (:...${paramName})`
-          : `${whereColumn} IN (null)`;
-
-      case FilterTypes.LIKE:
-        this.params[paramName] = `%${filter.filterValue}%`;
-        return `CAST(${whereColumn} AS TEXT)  LIKE :${paramName}`;
-
-      case FilterTypes.GE:
-        this.params[paramName] = filter.filterValue;
-        return `${whereColumn} >= :${paramName}`;
-
-      case FilterTypes.LE:
-        this.params[paramName] = filter.filterValue;
-        return `${whereColumn} <= :${paramName}`;
-
-      case FilterTypes.BTW:
-        [this.params[paramName], this.params[paramAuxName]] =
-          filter.filterValue.split('|');
-
-        return `${whereColumn} BETWEEN :${paramName} AND :${paramAuxName} `;
-
-      default:
-        throw new Error(`Unknown filter type: ${filter.filterType}!`);
-    }
+  for (let i = 0; i < filterLength; i += 1) {
+    queryBuilder.andWhere(
+      buildFilter(
+        {
+          filterBy: filter.filterBy[i],
+          filterType: filter.filterType[i],
+          filterValue: filter.filterValue[i],
+        },
+        alias,
+        params,
+        paramsCount,
+      ),
+      params,
+    );
   }
-}
+};

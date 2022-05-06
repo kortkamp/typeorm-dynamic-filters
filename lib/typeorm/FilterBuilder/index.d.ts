@@ -10,5 +10,6 @@ export declare class FilterBuilder<Entity> {
     entityRepository: Repository<Entity>;
     private alias;
     constructor(entityRepository: Repository<Entity>, alias: string);
+    verifyColumnExists(column: string, repo: Repository<Entity>): void;
     build(query: IFilterQuery): SelectQueryBuilder<Entity>;
 }

@@ -1,9 +1,9 @@
 import { Repository } from 'typeorm';
 import { SelectQueryBuilder } from 'typeorm/query-builder/SelectQueryBuilder';
 
-import OrderBuilder, { IOrder } from './OrderBuilder';
-import PageBuilder, { IPage } from './PageBuilder';
-import WhereBuilder, { IFilter } from './WhereBuilder';
+import { orderBuild, IOrder } from './OrderBuilder';
+import { pageBuild, IPage } from './PageBuilder';
+import { whereBuild, IFilter } from './WhereBuilder';
 
 export interface IFilterQuery extends IFilter, IPage, IOrder {}
 
@@ -18,41 +18,30 @@ export class FilterBuilder<Entity> {
     private alias: string,
   ) {}
 
-  // verifyColumnExists(column: string, repo: Repository<Entity>): void {
-  //   const columnExists = repo.metadata.findColumnWithPropertyName(column);
-  //   if (!columnExists) {
-  //     throw new Error(
-  //       `Value ${column} is not valid for field filterBy ou orderBy`,
-  //     );
-  //   }
-  // }
+  verifyColumnExists(column: string, repo: Repository<Entity>): void {
+    const columnExists = repo.metadata.findColumnWithPropertyName(column);
+    if (!columnExists) {
+      throw new Error(
+        `Value ${column} is not valid for field filterBy ou orderBy`,
+      );
+    }
+  }
 
   build(query: IFilterQuery): SelectQueryBuilder<Entity> {
     const queryBuilder = this.entityRepository.createQueryBuilder(this.alias);
-    // if (query.orderBy) {
-    //   this.verifyColumnExists(query.orderBy, this.entityRepository);
-    // }
+    if (query.orderBy) {
+      this.verifyColumnExists(query.orderBy, this.entityRepository);
+    }
 
-    // query.filterBy.forEach(filterItem =>
-    //   this.verifyColumnExists(filterItem, this.entityRepository),
-    // );
-
-    const whereBuilder = new WhereBuilder<Entity>(
-      queryBuilder,
-      query,
-      this.alias,
+    query.filterBy.forEach(filterItem =>
+      this.verifyColumnExists(filterItem, this.entityRepository),
     );
-    whereBuilder.build();
 
-    const orderBuilder = new OrderBuilder<Entity>(
-      queryBuilder,
-      query,
-      this.alias,
-    );
-    orderBuilder.build();
+    whereBuild(queryBuilder, query, this.alias);
 
-    const pageBuilder = new PageBuilder<Entity>(queryBuilder, query);
-    pageBuilder.build();
+    orderBuild(queryBuilder, query, this.alias);
+
+    pageBuild(queryBuilder, query);
 
     return queryBuilder;
   }
