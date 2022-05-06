@@ -8,13 +8,13 @@ Create a TypeORM query builder for listing entries with filters, pagination and 
 
 run:
 ```bash
-npm install kortkamp/typeorm-dynamic-filters
+npm install typeorm-dynamic-filters
 ```
 
 or 
 
 ```bash
-yarn add kortkamp/typeorm-dynamic-filters
+yarn add typeorm-dynamic-filters
 ```
 <br>
 
