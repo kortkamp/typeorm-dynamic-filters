@@ -51,6 +51,6 @@
   ],
   "dependencies": {
     "joi": "^17.6.0",
-    "typeorm": "^0.3.6"
+    "typeorm": "^0.2.45"
   }
 }

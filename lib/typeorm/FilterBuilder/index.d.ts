@@ -5,10 +5,10 @@ import { IPage } from './PageBuilder';
 import { IFilter } from './WhereBuilder';
 export interface IFilterQuery extends IFilter, IPage, IOrder {
 }
+export declare const test: <Entity>(entityRepository: Repository<Entity>) => SelectQueryBuilder<Entity>;
 export declare class FilterBuilder<Entity> {
-    private entityRepository;
+    entityRepository: Repository<Entity>;
     private alias;
     constructor(entityRepository: Repository<Entity>, alias: string);
-    verifyColumnExists(column: string, repo: Repository<Entity>): void;
     build(query: IFilterQuery): SelectQueryBuilder<Entity>;
 }

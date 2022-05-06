@@ -1,8 +1,12 @@
-import { DataSource, DataSourceOptions } from 'typeorm';
+import {
+  createConnection,
+  ConnectionOptions,
+  getConnectionManager,
+} from 'typeorm';
 
 import { User } from './UserEntity';
 
-const options: DataSourceOptions = {
+const options: ConnectionOptions = {
   type: 'sqlite',
   database: ':memory:',
   entities: [User],
@@ -10,4 +14,13 @@ const options: DataSourceOptions = {
   logging: false,
 };
 
-export const AppDataSource = new DataSource(options);
+const create = async () => {
+  const connection = await createConnection(options);
+  return connection;
+};
+
+const close = async () => {
+  await getConnectionManager().get().close();
+};
+
+export { create, close };

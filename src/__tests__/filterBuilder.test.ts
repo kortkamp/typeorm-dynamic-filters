@@ -1,17 +1,9 @@
 import { Repository } from 'typeorm';
 
 import { FilterBuilder, IFilterQuery } from '../typeorm/FilterBuilder';
-import { AppDataSource } from './database/connection';
+import * as dbConnection from './database/connection';
 import { usersData } from './database/seed';
 import { User } from './database/UserEntity';
-
-// EQ: 'eq',
-// NOT: 'not',
-// IN: 'in',
-// LIKE: 'like',
-// GE: 'ge',
-// LE: 'le',
-// BTW: 'btw',
 
 const orderById = (a: User, b: User) => {
   if (a.id < b.id) {
@@ -30,9 +22,9 @@ describe('Test parseQueryFilters', () => {
   let filterQueryBuilder: FilterBuilder<User>;
 
   beforeAll(async () => {
-    await AppDataSource.initialize();
+    const connection = await dbConnection.create();
 
-    ormRepository = AppDataSource.getRepository(User);
+    ormRepository = connection.getRepository(User);
 
     filterQueryBuilder = new FilterBuilder(ormRepository, 'users');
 
@@ -42,8 +34,9 @@ describe('Test parseQueryFilters', () => {
     await Promise.all(createUsers);
   });
 
-  // afterAll(() => {
-  // });
+  afterAll(async () => {
+    await dbConnection.close();
+  });
 
   it('Should return all unfiltered itens', async () => {
     queryFilter = {
