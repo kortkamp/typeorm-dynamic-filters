@@ -2,6 +2,9 @@
 
 Create a TypeORM query builder for listing entries with filters, pagination and ordination. 
 
+
+Compatible with Typeorm 0.3
+
 <br>
 
 ## Installation
