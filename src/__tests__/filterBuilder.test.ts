@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 
 import { FilterBuilder, IFilterQuery } from '../typeorm/FilterBuilder';
-import * as dbConnection from './database/connection';
+import { AppDataSource } from './database/connection';
 import { usersData } from './database/seed';
 import { User } from './database/UserEntity';
 
@@ -22,7 +22,7 @@ describe('Test parseQueryFilters', () => {
   let filterQueryBuilder: FilterBuilder<User>;
 
   beforeAll(async () => {
-    const connection = await dbConnection.create();
+    const connection = await AppDataSource.initialize();
 
     ormRepository = connection.getRepository(User);
 
@@ -35,7 +35,7 @@ describe('Test parseQueryFilters', () => {
   });
 
   afterAll(async () => {
-    await dbConnection.close();
+    await AppDataSource.destroy();
   });
 
   it('Should return all unfiltered itens', async () => {
