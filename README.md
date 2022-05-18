@@ -2,6 +2,7 @@
 
 Create a TypeORM query builder for listing entries with filters, pagination and ordination. 
 
+
 <br>
 
 ## Installation
@@ -15,6 +16,14 @@ or
 
 ```bash
 yarn add typeorm-dynamic-filters
+```
+<br>
+
+This package is compatible with TypeORM 0.3 !
+
+For a TypeORM 0.2 compatible version you should use 0.0.2 version by running:
+```
+npm install typeorm-dynamic-filters@0.0.2
 ```
 <br>
 
