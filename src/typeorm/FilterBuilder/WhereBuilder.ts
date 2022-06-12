@@ -40,6 +40,9 @@ const buildFilter = (
   switch (filter.filterType) {
     case FilterTypes.EQ:
       params[paramName] = filter.filterValue;
+      if (filter.filterValue === 'null') {
+        return `${whereColumn} IS NULL`;
+      }
       return `${whereColumn} = :${paramName}`;
 
     case FilterTypes.NOT:

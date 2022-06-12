@@ -123,6 +123,9 @@ The valid filter types are:
 * btw - between two values ex: filterValue=30|40
 
 <br>
+If you need to filter by NULL values, just use the the 'eq' filterType and 'null' as filterValue.
+
+<br>
 The project includes a Joy Schema for validation libs such celebrate:
 
 ```

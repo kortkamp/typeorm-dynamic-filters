@@ -11,8 +11,8 @@ class User {
   @Column('varchar')
   name: string;
 
-  @Column('varchar')
-  role: 'user' | 'admin';
+  @Column('varchar', { nullable: true })
+  role: 'user' | 'admin' | null;
 
   @Column('varchar')
   sex: 'male' | 'female';

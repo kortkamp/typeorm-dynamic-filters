@@ -142,7 +142,9 @@ describe('Test parseQueryFilters', () => {
 
     const filteredUsers = await queryBuilder.getMany();
 
-    const filteredUsersData = usersData.filter(user => user.role !== 'admin');
+    const filteredUsersData = usersData.filter(
+      user => user.role && user.role !== 'admin',
+    );
 
     expect(filteredUsers.sort(orderById)).toEqual(
       filteredUsersData.sort(orderById),
@@ -281,5 +283,25 @@ describe('Test parseQueryFilters', () => {
     const filteredUsers = await queryBuilder.getMany();
 
     expect(filteredUsers).toEqual([usersData[3]]);
+  });
+
+  it('Should return EQ "null" filtered itens', async () => {
+    queryFilter = {
+      filterBy: ['role'],
+      filterType: ['eq'],
+      filterValue: ['null'],
+      page: undefined,
+      per_page: undefined,
+      orderBy: undefined,
+      orderType: undefined,
+    };
+
+    const queryBuilder = filterQueryBuilder.build(queryFilter);
+
+    const filteredUsers = await queryBuilder.getMany();
+
+    const filteredUsersData = usersData.filter(user => !user.role);
+
+    expect(filteredUsers.length).toBe(filteredUsersData.length);
   });
 });

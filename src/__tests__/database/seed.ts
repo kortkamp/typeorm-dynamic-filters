@@ -81,4 +81,12 @@ export const usersData: User[] = [
     sex: 'male',
     active: true,
   },
+  {
+    id: '11',
+    name: 'Victor',
+    email: 'victor@mail.com',
+    role: null,
+    sex: 'male',
+    active: true,
+  },
 ];
